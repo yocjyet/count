@@ -52,6 +52,77 @@ Ephemeral counters for tracking active sessions.
 
 **Authentication**: Admin endpoints require an `Authorization: Bearer <ADMIN_SECRET>` header. The Admin UI handles this via a login prompt.
 
+## Example Usage
+
+### Persistent Counters
+
+**1. Create a new counter**
+
+#### cURL
+```bash
+curl -X POST https://your-worker.workers.dev/counters \
+  -H "Content-Type: application/json" \
+  -d '{"key": "page-views"}'
+```
+
+#### JavaScript
+```javascript
+const response = await fetch("https://your-worker.workers.dev/counters", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ key: "page-views" }),
+});
+const result = await response.text();
+console.log(result);
+```
+
+**2. Increment the counter**
+
+You can use this endpoint directly in an `<img>` tag or via a simple fetch request.
+
+#### cURL
+```bash
+curl https://your-worker.workers.dev/counters/page-views/increment
+```
+
+#### JavaScript
+```javascript
+await fetch("https://your-worker.workers.dev/counters/page-views/increment");
+```
+
+**3. Get the current count**
+
+#### cURL
+```bash
+curl https://your-worker.workers.dev/counters/page-views
+```
+
+#### JavaScript
+```javascript
+const response = await fetch("https://your-worker.workers.dev/counters/page-views");
+const count = await response.text();
+console.log(count);
+```
+
+### Realtime Counters
+
+**Connect via WebSocket**
+
+#### JavaScript
+```javascript
+const ws = new WebSocket("wss://your-worker.workers.dev/realtime/active-users/connect");
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log("Current active users:", data.count);
+};
+```
+
+#### CLI (wscat)
+```bash
+npx wscat -c wss://your-worker.workers.dev/realtime/active-users/connect
+```
+
 ## Local Development
 
 ### Prerequisites
