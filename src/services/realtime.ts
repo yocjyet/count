@@ -66,7 +66,7 @@ export const register = (
 			const count = await rdb.zcard(key);
 
 			console.log(`[realtime] [key=${key}] count=${count}`);
-			server.send(JSON.stringify(count.toString()));
+			server.send(count.toString());
 		};
 
 		// Initial update
