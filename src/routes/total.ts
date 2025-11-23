@@ -69,7 +69,7 @@ app.get("/:key", async (c) =>
 );
 
 // Increment a counter
-app.get("/:key/increment", async (c) =>
+app.on(["GET", "PATCH"], "/:key/increment", async (c) =>
 	pipe(
 		increment(c.env.DB, c.req.param("key")),
 		Effect.map(({ content, status }) =>

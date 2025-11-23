@@ -29,7 +29,7 @@ Persistent counters for things like page views, downloads, etc.
 | `POST` | `/` | Create a new counter. Body: `{ "key": "my-counter" }` | No |
 | `GET` | `/` | List all counter keys (text format). | No |
 | `GET` | `/:key` | Get the current value of a counter. | No |
-| `GET` | `/:key/increment` | Increment a counter by 1. | No |
+| `GET` / `PATCH` | `/:key/increment` | Increment a counter by 1. | No |
 | `PUT` | `/:key` | Set a counter to a specific value. Body: `{ "val": 123 }` | **Yes** |
 | `DELETE` | `/:key` | Delete a counter. | **Yes** |
 
