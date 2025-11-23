@@ -41,6 +41,7 @@ export const register = (
 	rdb: Redis,
 	[client, server]: [WebSocket, WebSocket],
 	key: string,
+	ctx: ExecutionContext,
 ) =>
 	Effect.gen(function* () {
 		const sessionId = crypto.randomUUID();
@@ -82,12 +83,16 @@ export const register = (
 			}
 		}, HEARTBEAT_INTERVAL);
 
+		server.addEventListener("message", () => {
+			// Keep the connection alive
+		});
+
 		server.addEventListener("close", async () => {
 			console.log(
 				`[realtime] [key=${key}] client disconnecting (session=${sessionId})`,
 			);
 			clearInterval(intervalId);
-			await rdb.zrem(key, sessionId);
+			ctx.waitUntil(rdb.zrem(key, sessionId));
 		});
 
 		return new Response(null, {

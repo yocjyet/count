@@ -51,7 +51,7 @@ app.get("/:key/connect", async (c) => {
 			}),
 		}),
 		Effect.flatMap(({ webSocketPair, redis, key }) =>
-			register(redis, webSocketPair, key),
+			register(redis, webSocketPair, key, c.executionCtx),
 		),
 		Effect.catchAll(({ _tag, message, status }) => {
 			console.log("Error", _tag, message, status);
