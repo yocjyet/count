@@ -112,10 +112,23 @@ console.log(count);
 ```javascript
 const ws = new WebSocket("wss://your-worker.workers.dev/realtime/active-users/connect");
 
-ws.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  console.log("Current active users:", data.count);
-};
+// Listen to the 'message' event to receive updates
+ws.addEventListener("message", (event) => {
+  // The server sends the count as a raw string (e.g., "5")
+  const count = Number(event.data);
+  console.log("Current active users:", count);
+});
+
+// Optional: Log when connected
+ws.addEventListener("open", () => {
+  console.log("Connected to WebSocket");
+  // Keep the connection alive by sending a ping every 10 seconds
+  setInterval(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send("ping");
+    }
+  }, 10000);
+});
 ```
 
 #### CLI (wscat)
