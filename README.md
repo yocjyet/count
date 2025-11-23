@@ -185,3 +185,7 @@ npx wrangler secret put ADMIN_SECRET
 npx wrangler secret put UPSTASH_REDIS_REST_URL
 npx wrangler secret put UPSTASH_REDIS_REST_TOKEN
 ```
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
