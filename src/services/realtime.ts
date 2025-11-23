@@ -83,8 +83,9 @@ export const register = (
 			}
 		}, HEARTBEAT_INTERVAL);
 
-		server.addEventListener("message", () => {
+		server.addEventListener("message", (event) => {
 			// Keep the connection alive
+			console.log(`[realtime] [key=${key}] received message: ${event.data}`);
 		});
 
 		server.addEventListener("close", async () => {
