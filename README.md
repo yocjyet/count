@@ -110,25 +110,50 @@ console.log(count);
 
 #### JavaScript
 ```javascript
-const ws = new WebSocket("wss://your-worker.workers.dev/realtime/active-users/connect");
+let ws;
+let reconnectInterval;
 
-// Listen to the 'message' event to receive updates
-ws.addEventListener("message", (event) => {
-  // The server sends the count as a raw string (e.g., "5")
-  const count = Number(event.data);
-  console.log("Current active users:", count);
-});
+function connect() {
+  ws = new WebSocket("wss://your-worker.workers.dev/realtime/active-users/connect");
 
-// Optional: Log when connected
-ws.addEventListener("open", () => {
-  console.log("Connected to WebSocket");
-  // Keep the connection alive by sending a ping every 10 seconds
-  setInterval(() => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send("ping");
+  ws.onmessage = (event) => {
+    const count = Number(event.data);
+    console.log("Current active users:", count);
+  };
+
+  ws.onopen = () => {
+    console.log("Connected");
+    // Clear any pending reconnects
+    if (reconnectInterval) clearTimeout(reconnectInterval);
+    
+    // Keep alive
+    setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) ws.send("ping");
+    }, 10000);
+  };
+
+  ws.onclose = () => {
+    console.log("Disconnected. Reconnecting in 3s...");
+    reconnectInterval = setTimeout(connect, 3000);
+  };
+  
+  ws.onerror = (err) => {
+    console.error("WebSocket error:", err);
+    ws.close(); // Trigger onclose to reconnect
+  };
+}
+
+// Handle tab visibility changes
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    if (!ws || ws.readyState === WebSocket.CLOSED) {
+      connect();
     }
-  }, 10000);
+  }
 });
+
+// Start connection
+connect();
 ```
 
 #### CLI (wscat)
